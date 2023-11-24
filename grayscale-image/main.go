@@ -37,7 +37,7 @@ func main() {
 	}
 
 	newImg := image.NewRGBA(image.Rectangle{Min: img.Bounds().Min, Max: img.Bounds().Max})
-	for i := range grayscale(&img) {
+	for i := range grayscale(img) {
 		newImg.Set(i.x, i.y, i.c)
 	}
 	png.Encode(outputFile, newImg)
@@ -51,9 +51,8 @@ type inputPixel struct {
 	c color.Color
 }
 
-func grayscale(source *image.Image) <-chan inputPixel {
+func grayscale(img image.Image) <-chan inputPixel {
 	out := make(chan inputPixel)
-	img := *source
 	wg := sync.WaitGroup{}
 	wg.Add(1)
 
@@ -66,7 +65,7 @@ func grayscale(source *image.Image) <-chan inputPixel {
 				go func() {
 					defer wg.Done()
 					r, g, b, a := img.At(posX, posY).RGBA()
-					grey := luminosity(uint8(r>>8), uint8(g>>8), uint8(b>>8))
+					grey := luminosity(float64(r>>8), float64(g>>8), float64(b>>8))
 					pixel := color.RGBA{
 						R: grey,
 						G: grey,
@@ -91,7 +90,7 @@ func grayscale(source *image.Image) <-chan inputPixel {
 	return out
 }
 
-func luminosity(r, g, b uint8) uint8 {
-	grey := uint8(float64(r)*0.21 + float64(g)*0.587 + float64(b)*0.114)
+func luminosity(r, g, b float64) uint8 {
+	grey := uint8(r*0.21 + g*0.587 + b*0.114)
 	return grey
 }
