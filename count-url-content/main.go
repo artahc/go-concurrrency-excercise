@@ -76,8 +76,8 @@ func countWords(ch <-chan string) <-chan map[string]int {
 func main() {
 	urls := []string{
 		"https://baconipsum.com/api/?type=meat-and-filler&paras=5&format=text",
-		// "https://baconipsum.com/api/?type=all-meat&paras=3&format=text",
-		// "https://baconipsum.com/api/?type=all-meat&sentences=150&format=text",
+		"https://baconipsum.com/api/?type=all-meat&paras=3&format=text",
+		"https://baconipsum.com/api/?type=all-meat&sentences=150&format=text",
 	}
 
 	ch := fetch(urls...)
