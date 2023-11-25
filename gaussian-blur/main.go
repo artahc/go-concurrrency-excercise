@@ -18,6 +18,17 @@ var gaussianKernel3x3 = matrix{
 	[]float64{1.0 / 16.0, 1.0 / 8.0, 1.0 / 16.0},
 }
 
+var gaussianKernel8x8 = matrix{
+	[]float64{1.0 / 256.0, 1.0 / 128.0, 1.0 / 256.0, 1.0 / 128.0, 1.0 / 64.0, 1.0 / 128.0, 1.0 / 256.0, 1.0 / 128.0},
+	[]float64{1.0 / 128.0, 1.0 / 64.0, 1.0 / 128.0, 1.0 / 64.0, 1.0 / 32.0, 1.0 / 64.0, 1.0 / 128.0, 1.0 / 64.0},
+	[]float64{1.0 / 256.0, 1.0 / 128.0, 1.0 / 256.0, 1.0 / 128.0, 1.0 / 64.0, 1.0 / 128.0, 1.0 / 256.0, 1.0 / 128.0},
+	[]float64{1.0 / 128.0, 1.0 / 64.0, 1.0 / 128.0, 1.0 / 64.0, 1.0 / 32.0, 1.0 / 64.0, 1.0 / 128.0, 1.0 / 64.0},
+	[]float64{1.0 / 64.0, 1.0 / 32.0, 1.0 / 64.0, 1.0 / 32.0, 1.0 / 16.0, 1.0 / 32.0, 1.0 / 64.0, 1.0 / 32.0},
+	[]float64{1.0 / 128.0, 1.0 / 64.0, 1.0 / 128.0, 1.0 / 64.0, 1.0 / 32.0, 1.0 / 64.0, 1.0 / 128.0, 1.0 / 64.0},
+	[]float64{1.0 / 256.0, 1.0 / 128.0, 1.0 / 256.0, 1.0 / 128.0, 1.0 / 64.0, 1.0 / 128.0, 1.0 / 256.0, 1.0 / 128.0},
+	[]float64{1.0 / 128.0, 1.0 / 64.0, 1.0 / 128.0, 1.0 / 64.0, 1.0 / 32.0, 1.0 / 64.0, 1.0 / 128.0, 1.0 / 64.0},
+}
+
 // TODO: Bruh, copy pasted from internet, find a way to generate this kernel
 var gaussianKernel16x16 = matrix{
 	{2.0e-06, 8.0e-06, 2.0e-05, 4.0e-05, 5.0e-05, 4.0e-05, 2.0e-05, 8.0e-06, 2.0e-06, 8.0e-06, 2.0e-05, 3.0e-05, 2.0e-05, 8.0e-06, 2.0e-06, 1.0e-07},
@@ -79,7 +90,7 @@ func main() {
 
 	fmt.Printf("Dimension => x: %v y: %v\n", img.Bounds().Dx(), img.Bounds().Dy())
 
-	newImg := gaussianBlur(img, gaussianKernel16x16)
+	newImg := gaussianBlur(img, gaussianKernel8x8)
 	outputFile, err := os.Create("out.png")
 	if err != nil {
 		logError(err)
@@ -89,7 +100,7 @@ func main() {
 }
 
 func gaussianBlur(img image.Image, kernel matrix) image.Image {
-	newImg := image.NewGray(img.Bounds())
+	newImg := image.NewRGBA(img.Bounds())
 	in := make(matrix, img.Bounds().Dx())
 	for i := range in {
 		in[i] = make([]float64, img.Bounds().Dy())
@@ -106,9 +117,9 @@ func gaussianBlur(img image.Image, kernel matrix) image.Image {
 	mat := convolution(in, kernel)
 	for x := 0; x < img.Bounds().Dx(); x++ {
 		for y := 0; y < img.Bounds().Dy(); y++ {
-			newImg.Set(x, y, color.Gray{
-				Y: uint8(mat[x][y]),
-			})
+			// _, _, _, a := img.At(x, y).RGBA()
+			gr := uint8(mat[x][y])
+			newImg.Set(x, y, color.Gray{Y: gr})
 		}
 	}
 
