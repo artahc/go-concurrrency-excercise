@@ -103,7 +103,7 @@ func gaussianBlur(img image.Image, kernel matrix) image.Image {
 		}
 	}
 
-	mat := convolution(in, gaussianKernel3x3)
+	mat := convolution(in, kernel)
 	for x := 0; x < img.Bounds().Dx(); x++ {
 		for y := 0; y < img.Bounds().Dy(); y++ {
 			newImg.Set(x, y, color.Gray{
